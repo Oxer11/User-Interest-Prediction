@@ -1,0 +1,210 @@
+% !TEX TS-program = xelatex
+% !TEX encoding = UTF-8 Unicode
+% !Mode:: "TeX:UTF-8"
+
+%This file contains the LaTeX code of my laboratory report for my ICS II course.
+%Author: 张作柏/Zuobai Zhang <17300240035@fudan.edu.cn>
+
+% This is a simple template for a LaTeX document using the "article" class.
+% See "book", "report", "letter" for other types of document.
+
+\documentclass[12pt]{article} % use larger type; default would be 10pt
+
+\usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
+
+%%% Examples of Article customizations
+% These packages are optional, depending whether you want the features they provide.
+% See the LaTeX Companion or other references for full information.
+
+%%% PAGE DIMENSIONS
+\usepackage[top=1.05in, bottom=0.95in, left=0.90in, right=1.10in]{geometry}
+%\usepackage{geometry} % to change the page dimensions
+\geometry{a4paper} % or letterpaper (US) or a5paper or....
+% \geometry{margin=2in} % for example, change the margins to 2 inches all round
+% \geometry{landscape} % set up the page for landscape
+%   read geometry.pdf for detailed page layout information
+
+\usepackage{graphicx} % support the \includegraphics command and options
+
+% \usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
+
+%%% PACKAGES
+\usepackage{booktabs} % for much better looking tables
+\usepackage{array} % for better arrays (eg matrices) in maths
+\usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
+\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
+\usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
+% These packages are all incorporated in the memoir class to one degree or another...
+
+%%% HEADERS & FOOTERS
+\usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
+\pagestyle{fancy} % options: empty , plain , fancy
+%\renewcommand{\headrulewidth}{0pt} % customise the layout...
+\lhead{}\chead{}\rhead{}
+\lfoot{}\cfoot{\thepage}\rfoot{}
+
+%%% SECTION TITLE APPEARANCE
+\usepackage{sectsty}
+\allsectionsfont{\sffamily\mdseries\upshape} % (See the fntguide.pdf for font help)
+% (This matches ConTeXt defaults)
+
+%%% ToC (table of contents) APPEARANCE
+\usepackage[nottoc,notlof,notlot]{tocbibind} % Put the bibliography in the ToC
+\usepackage[titles,subfigure]{tocloft} % Alter the style of the Table of Contents
+\renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
+\renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % No bold!
+\usepackage{titletoc}
+\titlecontents{section}
+              [1.5cm]
+              {\bf \large}%
+              {\contentslabel{1.8em}}%
+              {}%
+              {\titlerule*[0.5pc]{$\cdot$}\contentspage\hspace*{0.6cm}}%
+		   [\vspace{0.5em}]
+\titlecontents{subsection}
+              [1.8cm]
+              {\normalsize}%
+              {\contentslabel{2.0em}}%
+              {}%
+              {\titlerule*[0.5pc]{$\cdot$}\contentspage\hspace*{0.6cm}}%
+		   [\vspace{0.4em}]
+\titlecontents{subsubsection}
+              [2.1cm]
+              {\small}%
+              {\contentslabel{2.5em}}%
+              {}%
+              {\titlerule*[0.5pc]{$\cdot$}\contentspage\hspace*{0.6cm}}%
+		   [\vspace{0.4em}]
+
+
+\usepackage[UTF8]{ctex}
+\usepackage{fancyhdr}
+\usepackage{enumerate}
+\usepackage{indentfirst}
+\usepackage{extramarks}
+\usepackage{titling}
+\usepackage{xcolor}
+\usepackage{fontspec}
+\usepackage[CJKbookmarks=true,colorlinks,linkcolor=black]{hyperref}
+\setmainfont{Times New Roman}
+
+%%% END Article customizations
+
+%%% The "real" document content comes below...
+
+%\title{\textbf{Digital Logic and Computer Design Report}}
+\title{\textbf{KDD Cup 2012 Track 1解题报告}}
+\author{张作柏\\17300240035}
+%\date{} % Activate to display a given date or no date (if empty),
+         % otherwise the current date is printed 
+
+\begin{document}
+\begin{sloppypar}
+\maketitle
+
+\pagestyle{fancy}
+\lhead{\textbf{{\thetitle}}}
+\rhead{\textbf{\nouppercase{\firstleftmark}}}
+\cfoot{\thepage}
+
+\thispagestyle{empty}
+\tableofcontents
+\clearpage
+
+\setcounter{page}{1}
+
+
+\section{任务简介}
+
+本次PJ我选择了KDD Cup 2012 Track 1题目\footnote{\url{https://www.kaggle.com/c/kddcup2012-track1}}，其中模型主要参考了~\cite{}一文。
+
+\subsection{任务描述}
+
+近年来，随着像Facebook、Twitter、腾讯微博等社交平台的发展，在线社交网络引起了广泛的关注。全中国最大的微博系统之一，腾讯微博，已经成为网络社交的重要平台。目前，腾讯微博拥有超过2亿的注册用户，每天产生四千万条信息。海量的数据引起了数据挖掘爱好者的注意，如何利用数据信息改善用户的使用体验，成为了一个十分有趣并值得研究的问题。
+
+本任务中，我们需要根据用户的兴趣，预测他是否会关注某个对象(item)。对象可以是某个组织、个人、群体等等。最终我们要在所有备选推荐中，选择至多三个对象推荐给用户。
+
+\subsection{数据信息}
+
+\subsubsection{名词定义}
+
+{\bf 对象(item)：} 对象是腾讯微博中的一个用户，他可以代表组织、个人或群体。数据集中大约有六千个不同的对象。
+
+{\bf 发微博(tweet):} 发微博是指用户可以在微博系统中发表一条信息，他的关注者会看到这条信息的提醒。
+
+{\bf 转发(retweet)：} 用户可以转发其他用户发表的信息，并在其下添加评论。
+
+{\bf 评论(comment)：} 用户可以在别人的微博下发表评论。
+
+{\bf 关注者(follower)：} 用户可以关注其他用户，若用户A关注了B，则称A是B的关注者。
+
+\subsubsection{数据文件}
+
+\begin{enumerate}
+	\item {\bf 训练数据集rec\_log\_train.txt：} 记录了用户与对象之间的历史推荐结果。\\
+	文件格式：(UserId) (ItemId) (Result) (Unix-timestamp)\\
+	在Unix-timestamp的时间，系统向用户UserId推荐了物品ItemId，得到的结果为Result。Result为1，表示接受；Result为-1，表示拒绝。
+	\item {\bf 测试数据集rec\_log\_test.txt：} 记录了测试集中用户与对象之间的可能推荐。\\
+	文件格式同训练数据集rec\_log\_train.txt\\
+	区别在于其中Result域为0，需要我们来预测。
+	\item {\bf 用户信息user\_profile.txt：}
+	\item {\bf 对象数据item.txt：}
+	\item {\bf 用户行为user\_action.txt：}
+	\item {\bf 用户关注行为user\_sns.txt：}
+	\item {\bf 用户关键词描述user\_key\_word.txt：}
+\end{enumerate}
+
+\subsection{提交格式}
+
+\subsection{评价方式}
+
+
+\newpage
+\section{数据预处理}
+
+\subsection{数据清洗}
+
+\subsection{成对训练}
+
+\newpage
+\section{用户兴趣模型}
+
+\subsection{基本模型}
+
+\subsection{年龄、性别因素}
+
+\subsection{间接反馈信息}
+
+\subsection{关键词、标签信息}
+
+\subsection{用户、物品信息}
+
+
+\newpage
+\section{用户行为模型}
+
+\subsection{时间度量}
+
+\subsection{概率预测}
+
+\newpage
+\section{集成学习}
+
+\subsection{模型原理}
+
+\subsection{训练方法}
+
+
+\newpage
+\section{结果评估}
+
+\subsection{测试模块}
+
+\subsection{测试结果}
+
+\newpage
+\bibliographystyle{unsrt} 
+\bibliography{PJ}
+
+\end{sloppypar}
+\end{document}
