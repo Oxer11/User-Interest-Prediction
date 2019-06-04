@@ -1,3 +1,10 @@
-\begin{thebibliography}{}
+\begin{thebibliography}{1}
+
+\bibitem{chen2012context}
+Yunwen Chen, Zuotao Liu, Daqi Ji, Yingwei Xin, Wenguang Wang, Lu~Yao, and
+  Yi~Zou.
+\newblock Context-aware ensemble of multifaceted factorization models for
+  recommendation prediction in social networks.
+\newblock In {\em KDD-Cup Workshop}, 2012.
 
 \end{thebibliography}

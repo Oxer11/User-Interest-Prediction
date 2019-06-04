@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.14159265-2.6-0.99998 (TeX Live 2017/Debian) (preloaded format=xelatex 2019.5.13)  1 JUN 2019 23:38
+This is XeTeX, Version 3.14159265-2.6-0.99998 (TeX Live 2017/Debian) (preloaded format=xelatex 2019.5.13)  4 JUN 2019 20:00
 entering extended mode
  restricted \write18 enabled.
  Source specials enabled.
@@ -1798,26 +1798,22 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 .................................................
 [1
 
-] [2] [3] [4] [5] [6] [7] (./report.bbl
-
-LaTeX Warning: Empty `thebibliography' environment on input line 3.
-
-)
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 210.
- [8]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 210.
+] [2] [3] [4] [5] [6] [7] [8] [9] (./report.bbl)
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 292.
+ [10]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 292.
  (./report.aux)
-Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 210.
-Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 210.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 210.
+Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 292.
+Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 292.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 292.
  ) 
 Here is how much of TeX's memory you used:
- 29233 strings out of 494530
- 562479 string characters out of 6166160
- 627365 words of memory out of 5000000
- 32823 multiletter control sequences out of 15000+600000
- 535655 words of font info for 83 fonts, out of 8000000 for 9000
+ 29283 strings out of 494530
+ 565813 string characters out of 6166160
+ 631365 words of memory out of 5000000
+ 32872 multiletter control sequences out of 15000+600000
+ 535663 words of font info for 84 fonts, out of 8000000 for 9000
  264 hyphenation exceptions out of 8191
- 53i,11n,75p,10433b,610s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 53i,12n,75p,10433b,612s stack positions out of 5000i,500n,10000p,200000b,80000s
 
-Output written on report.pdf (10 pages).
+Output written on report.pdf (12 pages).
