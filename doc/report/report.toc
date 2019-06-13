@@ -6,10 +6,10 @@
 \contentsline {subsubsection}{\numberline {1.2.3}注意事项}{2}{subsubsection.1.2.3}
 \contentsline {subsection}{\numberline {1.3}提交格式}{3}{subsection.1.3}
 \contentsline {subsection}{\numberline {1.4}评价方式}{3}{subsection.1.4}
+\contentsline {subsection}{\numberline {1.5}为什么使用Julia？}{3}{subsection.1.5}
 \contentsline {section}{\numberline {2}数据预处理}{4}{section.2}
 \contentsline {subsection}{\numberline {2.1}会话分析}{4}{subsection.2.1}
 \contentsline {subsection}{\numberline {2.2}成对训练}{5}{subsection.2.2}
-\contentsline {subsection}{\numberline {2.3}补充数据}{5}{subsection.2.3}
 \contentsline {section}{\numberline {3}用户兴趣模型}{6}{section.3}
 \contentsline {subsection}{\numberline {3.1}基本模型}{6}{subsection.3.1}
 \contentsline {subsection}{\numberline {3.2}成对训练}{6}{subsection.3.2}
@@ -20,11 +20,12 @@
 \contentsline {section}{\numberline {4}用户行为模型}{7}{section.4}
 \contentsline {subsection}{\numberline {4.1}时间度量}{7}{subsection.4.1}
 \contentsline {subsection}{\numberline {4.2}概率预测}{7}{subsection.4.2}
-\contentsline {section}{\numberline {5}集成学习}{8}{section.5}
+\contentsline {section}{\numberline {5}集成学习Adaboost}{8}{section.5}
 \contentsline {subsection}{\numberline {5.1}模型原理}{8}{subsection.5.1}
 \contentsline {subsection}{\numberline {5.2}训练方法}{8}{subsection.5.2}
 \contentsline {section}{\numberline {6}结果评估}{9}{section.6}
 \contentsline {subsection}{\numberline {6.1}测试模块}{9}{subsection.6.1}
 \contentsline {subsection}{\numberline {6.2}测试结果}{9}{subsection.6.2}
+\contentsline {section}{\numberline {7}代码说明}{9}{section.7}
 \contentsline {section}{参考文献}{10}{section*.2}
 \contentsfinish 

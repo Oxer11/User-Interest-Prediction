@@ -7,4 +7,30 @@ Yunwen Chen, Zuotao Liu, Daqi Ji, Yingwei Xin, Wenguang Wang, Lu~Yao, and
   recommendation prediction in social networks.
 \newblock In {\em KDD-Cup Workshop}, 2012.
 
+\bibitem{liu2009learning}
+Tie-Yan Liu et~al.
+\newblock Learning to rank for information retrieval.
+\newblock {\em Foundations and Trends{\textregistered} in Information
+  Retrieval}, 3(3):225--331, 2009.
+
+\bibitem{furnkranz2003pairwise}
+Johannes F{\"u}rnkranz and Eyke H{\"u}llermeier.
+\newblock Pairwise preference learning and ranking.
+\newblock In {\em European conference on machine learning}, pages 145--156.
+  Springer, 2003.
+
+\bibitem{rendle2014improving}
+Steffen Rendle and Christoph Freudenthaler.
+\newblock Improving pairwise learning for item recommendation from implicit
+  feedback.
+\newblock In {\em Proceedings of the 7th ACM international conference on Web
+  search and data mining}, pages 273--282. ACM, 2014.
+
+\bibitem{sharma2013pairwise}
+Amit Sharma and Baoshi Yan.
+\newblock Pairwise learning in recommendation: experiments with community
+  recommendation on linkedin.
+\newblock In {\em Proceedings of the 7th ACM Conference on Recommender
+  Systems}, pages 193--200. ACM, 2013.
+
 \end{thebibliography}
