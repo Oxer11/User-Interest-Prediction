@@ -33,6 +33,35 @@ Amit Sharma and Baoshi Yan.
 \newblock In {\em Proceedings of the 7th ACM Conference on Recommender
   Systems}, pages 193--200. ACM, 2013.
 
+\bibitem{koren2009matrix}
+Yehuda Koren, Robert Bell, and Chris Volinsky.
+\newblock Matrix factorization techniques for recommender systems.
+\newblock {\em Computer}, (8):30--37, 2009.
+
+\bibitem{shen2012learning}
+Yelong Shen and Ruoming Jin.
+\newblock Learning personal+ social latent factor model for social
+  recommendation.
+\newblock In {\em Proceedings of the 18th ACM SIGKDD international conference
+  on Knowledge discovery and data mining}, pages 1303--1311. ACM, 2012.
+
+\bibitem{kleibergen2006generalized}
+Frank Kleibergen and Richard Paap.
+\newblock Generalized reduced rank tests using the singular value
+  decomposition.
+\newblock {\em Journal of econometrics}, 133(1):97--126, 2006.
+
+\bibitem{klema1980singular}
+Virginia Klema and Alan Laub.
+\newblock The singular value decomposition: Its computation and some
+  applications.
+\newblock {\em IEEE Transactions on automatic control}, 25(2):164--176, 1980.
+
+\bibitem{robbins1951stochastic}
+Herbert Robbins and Sutton Monro.
+\newblock A stochastic approximation method.
+\newblock {\em The annals of mathematical statistics}, pages 400--407, 1951.
+
 \bibitem{freund1997decision}
 Yoav Freund and Robert~E Schapire.
 \newblock A decision-theoretic generalization of on-line learning and an

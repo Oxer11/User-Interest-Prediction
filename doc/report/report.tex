@@ -101,6 +101,9 @@
 \usepackage{amsmath}
 \newcommand\calD{\mathcal{D}}
 \newcommand\XX{\boldsymbol{\mathit{X}}}
+\newcommand\qq{\boldsymbol{\mathit{q}}}
+\newcommand\pp{\boldsymbol{\mathit{p}}}
+
 
 \begin{document}
 \begin{sloppypar}
@@ -242,6 +245,7 @@ Julia是一种用于科学计算的新兴语言，其最大的特点是速度快
 最后，经过数据清洗，我们得到$3,794,928$个正例和$11,193,905$个负例，总共约一千五百万的训练数据，数据量缩减五倍，这大大提升了训练的效率。
 
 \subsection{成对训练}
+\label{sec:pair}
 
 不同于寻常的二分类问题，在这一问题中，我们需要对所有的推荐物品进行排序，这更像是一个学习排名的问题~\cite{liu2009learning}。实践证明~\cite{furnkranz2003pairwise}~\cite{rendle2014improving}~\cite{sharma2013pairwise}，以分类问题中常使用的MSE(Mean Square Error)作为目标函数进行训练的效果不是很好。在这一问题中，我们使用更加适合排名问题的成对训练方法。这一方法在推荐系统中的应用比较广泛，且非常适合排名问题。
 
@@ -251,9 +255,82 @@ Julia是一种用于科学计算的新兴语言，其最大的特点是速度快
 \newpage
 \section{用户兴趣模型}
 
-\subsection{基本模型}
+本节中，我们主要介绍我们的核心模型——用户兴趣模型。根据用户之前的推荐记录和用户的信息，推测用户的喜好，借此来预测用户对推荐物品接受与否。
+
+\subsection{隐因子模型}
+
+{\em 隐因子模型(Latent Factor Model)}是推荐系统中常使用的一种算法~\cite{koren2009matrix}。算法利用矩阵分解的思想，对用户的喜好进行建模，是一种{\em 协同过滤(Collaborative Filtering)}的常用方法~\cite{shen2012learning}。
+
+给定一个用户对物品的评分矩阵，如何衡量用户对物品的喜爱程度？LFM的一个基本假设是存在一个用户与物品属性的低维表示，可以用于衡量用户与物品的密切程度。通俗地讲，就是每个物品可能存在若干个属性，而每个用户对这些属性分别有相应的喜爱程度，最终这些属性的加权平均即为用户对物品的评分。这里的属性即对应算法中的{\em 隐因子(Latent Factor)}。
+
+隐因子模型也可被理解为矩阵低秩分解问题——用两个低秩矩阵的乘积近似原矩阵。矩阵分解的技术常被用于估计用户与物品的隐因子向量，其中最受欢迎的便是{\em 奇异值分解(Singular Value Decomposition)}~\cite{kleibergen2006generalized}。然而，由于矩阵分解的复杂度过高~\cite{klema1980singular}，本问题中的矩阵维度过大，所以并不适用。
+
+本问题中，我们用$\qq_i$和$\pp_u$分别代表物品的属性向量与用户对属性的喜好向量，令$\hat{r}_{ui}$表示用户$u$关注物品$i$的预测概率，则预测值可表示为：
+\begin{equation}
+	\hat{r}_{ui} = f(b_{ui} + \qq_i^\top \pp_u)
+\end{equation}
+其中函数$f(\cdot)$是sigmoid函数，即$f(x) = \frac{1}{1 + e^{-x}}$，用于将实数值映射到$(0,1)$区间表示概率。而$b_{ui}$是偏置项，可定义为：
+\begin{equation}
+	b_{ui} = \mu + b_u + b_i
+\end{equation}
+这个方程中的$\mu$表示所有的平均得分，$b_u$和$b_i$分别表示用户和物品的偏置项。
+
+我们的目标是用这些向量近似矩阵，故等价于下面的最优化问题：
+\begin{equation}
+\underset{\pp_*, \qq_*, b_*}{\operatorname{min}} \quad 
+\sum_{(u, i)\in\Omega} \left(r_{ui} - f(b_{ui} + \qq_i^\top \pp_u)\right)^2
+\end{equation}
+
+我们可使用迭代方法取学习其中参数的值，效率比矩阵分解要高许多。但是，实验结果证明直接套用该模型并不能取得好的结果。在下一节中，我们将介绍如何将成对训练的模式与LFM模型结合。
+
 
 \subsection{成对训练}
+
+在第\ref{sec:pair}节中，我们已将数据按照正负例进行了分组，每组由一对正例和负例构成。我们的目标是通过学习用户的喜好向量，来使得用户选择正例的概率要大于负例的概率。因此，我们将训练的损失函数调整为：
+\begin{equation}
+\label{eq:pairloss}
+g(\hat{r}_{ui}, \hat{r}_{uj}) = \left(1 + \exp\left(- \left(b_j - b_i + (\qq_j - \qq_i)^\top \pp_u \right)\right)\right)^{-1}
+\end{equation}
+其中样本$\hat{r}_{ui}\in \Omega^-,\hat{r}_{uj} \in \Omega^+$。
+
+需要注意：
+\begin{itemize}
+\item 这里只给出了一个样本的损失函数，整体的损失函数可视为所有样本之和。实际上，因为使用随机梯度下降算法，所以只需要用到一个样本的损失函数。
+\item 这里是需要最大化损失概率，只需要在学习时更改梯度更新方向即可。
+\item 偏置项中的$b_u$与$\mu$被抵消了，因为两个样本取自同一用户。这一现象还会出现在后续的模型扩展中，尽管原文并未言明。
+\item 因为loss function的变化，一些参数变得无法学习，自然也就会被踢出模型。因此，要根据可学习的参数调整预测的方式。
+\end{itemize}
+
+正如最后一条所言，我们需要调整在最后预测推荐物品的方式。原本我们只需要给出用户接受概率最高的三个物品，但是现在因为$b_u$等参数变得不可学习了，所以无法预测用户对物品的接受概率。好在我们只需要比较用户对物品的相对喜爱程度即可，由方程(\ref{eq:pairloss})可知，我们只需要选择$b_i + \qq_i^\top\pp_u$最大的三项物品即可。
+
+
+\subsection{随机梯度下降}
+
+{\em 随机梯度下降(Stochastic Gradient Descent)}~\cite{robbins1951stochastic}是机器学习中最常用的优化算法之一。它常被用于迭代地优化某个函数，在凸优化问题中扮演这尤其重要的角色。其基本思路是在每一步选择函数值下降最快的方向，迈出一小步。在随机梯度下降中，我们每次取一个样本损失函数的梯度作为整个损失函数梯度的近似，沿该方向迈一小步。写成更新式即为：
+\begin{equation}
+	x \leftarrow x - \eta \cdot \frac{\partial L}{\partial x}
+\end{equation}
+其中$\eta$表示学习率，用于调节更新的步长。
+
+随机梯度下降的好处是，每次迭代只需要考虑一个样本，所以时空复杂度非常低。唯一需要我们注意的一点就是如何计算loss对参数的梯度。因为是我自己手写的梯度更新，所以在此写出几个主要参数的梯度推导过程。
+
+令$L = g(\hat{r}_{ui}, \hat{r}_{uj}) = f(b_j - b_i + (\qq_j - \qq_i)^\top \pp_u)$，其中sigmoid函数$f(\cdot)$的导数为：
+\begin{equation}
+\frac{\partial f(x)}{\partial x} = f(x) \cdot (1 - f(x))
+\end{equation}
+
+因此，我们可以得到
+\begin{equation}
+\frac{\partial L}{\partial b_j} = L \cdot (1 - L)
+\end{equation}
+\begin{equation}
+\frac{\partial L}{\partial \qq_j} = L \cdot (1 - L) \cdot \pp_u
+\end{equation}
+\begin{equation}
+\frac{\partial L}{\partial \pp_u} = L \cdot (1 - L) \cdot \left(\qq_j - \qq_i\right)
+\end{equation}
+利用这些梯度，我们就可以进行参数学习了。后面的几个小节中，会引入新的可学习参数，不过其推导过程与梯度形式都与上式类似，就不一一推导了。
+
 
 \subsection{年龄、性别因素}
 

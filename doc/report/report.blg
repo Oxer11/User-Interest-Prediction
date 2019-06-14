@@ -3,44 +3,46 @@ Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
 The top-level auxiliary file: report.aux
 The style file: unsrt.bst
 Database file #1: PJ.bib
-You've used 11 entries,
+Warning--there's a number but no volume in koren2009matrix
+You've used 16 entries,
             1791 wiz_defined-function locations,
-            518 strings with 5694 characters,
-and the built_in function-call counts, 3326 in all, are:
-= -- 321
-> -- 124
-< -- 5
-+ -- 45
-- -- 34
-* -- 206
-:= -- 475
-add.period$ -- 37
-call.type$ -- 11
-change.case$ -- 10
+            549 strings with 6527 characters,
+and the built_in function-call counts, 4775 in all, are:
+= -- 472
+> -- 167
+< -- 7
++ -- 61
+- -- 45
+* -- 300
+:= -- 678
+add.period$ -- 53
+call.type$ -- 16
+change.case$ -- 15
 chr.to.int$ -- 0
-cite$ -- 11
-duplicate$ -- 163
-empty$ -- 331
-format.name$ -- 34
-if$ -- 785
+cite$ -- 17
+duplicate$ -- 231
+empty$ -- 470
+format.name$ -- 45
+if$ -- 1123
 int.to.chr$ -- 0
-int.to.str$ -- 11
-missing$ -- 12
-newline$ -- 58
-num.names$ -- 11
-pop$ -- 48
+int.to.str$ -- 16
+missing$ -- 17
+newline$ -- 83
+num.names$ -- 16
+pop$ -- 61
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 0
-skip$ -- 94
+skip$ -- 137
 stack$ -- 0
-substring$ -- 260
-swap$ -- 62
-text.length$ -- 5
+substring$ -- 398
+swap$ -- 88
+text.length$ -- 7
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 0
-warning$ -- 0
-while$ -- 34
-width$ -- 13
-write$ -- 125
+warning$ -- 1
+while$ -- 51
+width$ -- 18
+write$ -- 181
+(There was 1 warning)
