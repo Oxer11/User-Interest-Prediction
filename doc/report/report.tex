@@ -103,6 +103,8 @@
 \newcommand\XX{\boldsymbol{\mathit{X}}}
 \newcommand\qq{\boldsymbol{\mathit{q}}}
 \newcommand\pp{\boldsymbol{\mathit{p}}}
+\newcommand\yy{\boldsymbol{\mathit{y}}}
+\newcommand\zz{\boldsymbol{\mathit{z}}}
 
 
 \begin{document}
@@ -332,13 +334,70 @@ g(\hat{r}_{ui}, \hat{r}_{uj}) = \left(1 + \exp\left(- \left(b_j - b_i + (\qq_j -
 利用这些梯度，我们就可以进行参数学习了。后面的几个小节中，会引入新的可学习参数，不过其推导过程与梯度形式都与上式类似，就不一一推导了。
 
 
-\subsection{年龄、性别因素}
+\subsection{日期时间因素}
+
+时间因素在衡量用户行为中起到了比较关键的作用。比如，白天的时间用户常常会忙于工作，而不会关注微博，而晚上关注的行为就多了些。另外，物品的受欢迎程度也因时间而异。
+
+首先，我们添加三个时间因子：hour、second和day，其偏置计算方式如下：
+\begin{equation}
+	b_{hour} = b_{Bin(t)}
+\end{equation}
+\begin{equation}
+	b_{day} = \frac{t - d^-}{d^+ - d^-} b_{day}^- + \frac{d^+ - t}{d^+ - d^-} b_{day}^+
+\end{equation}
+\begin{equation}
+	b_{sec} = \frac{sec(t) - s^-}{s^+ - s^-} b_{sec}^- + \frac{s^+ - sec(t)}{s^+ - s^-} b_{sec}^+
+\end{equation}
+其中hour表示一天中的时刻(取值范围为1\~{}24)，sec表示一天中的第几秒(取值范围为0\~{}86400)，day表示的是记录中的第几天(取值范围为1318348785\~{}1322668798)。这里$b_{day}^-,b_{day}^+,b_{sec}^-,b_{sec}^+$是四个可学习的参数。$d^-,d^+,s^-,s^+$分别表示整个数据集时间的开始与结束和一天时间的开始和结束，此处分别设置为$1318348785,1322668798,0,86400$。
+
+同理，我们可以在item属性向量中添加$\zz_{day}$和$\zz_{sec}$两个属性向量，计算方法同上。
+
+
+\subsection{用户个人信息}
+
+为了综合考虑用户的各种信息，用户的年龄与性别也可能会影响用户对物品的喜好。所以，我们可以将这些因素作为喜好向量$\yy_{age(u),gender(u)}$添加到用户的喜好向量$\pp_u$中。除此之外，我们还可以把用户发表的微博数量作为一个因素，因为微博的数量也可以衡量用户的活跃程度。
+
+注意到，item和用户是共用一个字典的，也就是说item也有性别、年龄等因素。不同的人对不同年龄段、不同性别的对象的喜好是不同的，不同的对象对不同年龄段、不同性别的人的吸引程度也是不同的，所以我们可以把这两个因素，作为偏置加入到$b_{ui}$项中。
+
+接下来，我们讨论如何处理性别、年龄、微博数量三个属性。
+
+对于性别属性，数据描述中声称有三种：男、女、未知，但实际操作中我发现还有第四种性别，因为无法解释，所以我就只好添加了一种情况，即性别对应1、2、3、4四种类别。
+
+对于年龄属性，信息中给定的是出生年份，我们要将其转化为用户的年龄：
+\begin{equation}
+\text{age}(u) =
+\begin{cases}
+0 & x<1950 \\
+\text{ceil}((x-1950)/2)+1& 1950\le x < 2004 \\
+28 & x\ge 2004 \\
+29 & x \text{ is illegal}
+\end{cases}
+\end{equation}
+
+对于微博数量这一属性，因为其分布过于稀疏，我们通过取log将其压缩到$[0,15]$的区间范围内。
+
 
 \subsection{间接反馈信息}
 
+
+
 \subsection{关键词、标签信息}
 
-\subsection{用户、物品信息}
+
+最终，汇总了所有的信息后，我们得到最新的属性向量为：
+\begin{align}
+\ddot{b}_{ui} &= b_i + b_{hour} + b_{day} + b_{sec} + b_{u,gender(i)} \nonumber\\
+&+ b_{u,age(i)} + b_{gender(u),i} + b_{age(u),i} + b_{kw(u,i)} + b_{tag(u,i)}
+\end{align}
+\begin{equation}
+\ddot{\qq}_{i} = \qq_i + \zz_{day} + \zz_{sec}
+\end{equation}
+\begin{align}
+\ddot{\pp}_{u} &= \pp_{u} + \yy_{age(u),gender(u)} + \yy_{tweetnum(u)} \nonumber\\
+&+ |S(u)|^{\alpha_1}\sum_{k\in S(u)} \yy_k + |A(u)|^{\alpha_2} \sum_{l\in A(u)} \yy_l \nonumber\\
+&+ \sum_{m \in K(u)} W(u,m) \cdot \yy_{kw(m)} + |T(u)|^{-\frac{1}{2}} \sum_{n \in T(u)} \yy_{tag(n)}
+\end{align}
+
 
 
 \newpage
@@ -352,11 +411,11 @@ g(\hat{r}_{ui}, \hat{r}_{uj}) = \left(1 + \exp\left(- \left(b_j - b_i + (\qq_j -
 \newpage
 \section{集成学习AdaBoost}
 
-本节中我们将组合方法融入模型中，组合分类器(ensemble)是一个复合模型，由多个分类器组合而成，个体分类器投票，组合分类器基于投票返回类标号预测。组合分类器往往比成员分类器更准确。
+本节中我们将组合方法融入模型中，{\em 组合分类器(ensemble)}是一个复合模型，由多个分类器组合而成，个体分类器投票，组合分类器基于投票返回类标号预测。组合分类器往往比成员分类器更准确。
 
 \subsection{模型原理}
 
-自适应提升算法(Adaptive Boosting)是一种机器学习算法，由Yoav Freund和Robert Schapire于1997年首次提出~\cite{freund1997decision}。其基本思想是：前一个分类器分错的样本会被用来训练下一个分类器，相对于大多数其他学习算法而言，不容易出现过拟合现象。
+{\em 自适应提升算法(Adaptive Boosting)}是一种机器学习算法，由Yoav Freund和Robert Schapire于1997年首次提出~\cite{freund1997decision}。其基本思想是：前一个分类器分错的样本会被用来训练下一个分类器，相对于大多数其他学习算法而言，不容易出现过拟合现象。
 
 AdaBoost可被应用于人脸识别~\cite{wu2004fast}，网络入侵检测~\cite{hu2008adaboost}，预测蛋白质结构~\cite{niu2006predicting}等机器学习问题。此外，它还可以用于处理不平衡数据~\cite{viola2002fast}，非常适合处理我们这道题中正样本较少的情况。
 
