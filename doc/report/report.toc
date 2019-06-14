@@ -20,12 +20,14 @@
 \contentsline {section}{\numberline {4}用户行为模型}{7}{section.4}
 \contentsline {subsection}{\numberline {4.1}时间度量}{7}{subsection.4.1}
 \contentsline {subsection}{\numberline {4.2}概率预测}{7}{subsection.4.2}
-\contentsline {section}{\numberline {5}集成学习Adaboost}{8}{section.5}
+\contentsline {section}{\numberline {5}集成学习AdaBoost}{8}{section.5}
 \contentsline {subsection}{\numberline {5.1}模型原理}{8}{subsection.5.1}
 \contentsline {subsection}{\numberline {5.2}训练方法}{8}{subsection.5.2}
-\contentsline {section}{\numberline {6}结果评估}{9}{section.6}
-\contentsline {subsection}{\numberline {6.1}测试模块}{9}{subsection.6.1}
-\contentsline {subsection}{\numberline {6.2}测试结果}{9}{subsection.6.2}
-\contentsline {section}{\numberline {7}代码说明}{9}{section.7}
-\contentsline {section}{参考文献}{10}{section*.2}
+\contentsline {paragraph}{参数设置}{9}{section*.3}
+\contentsline {section}{\numberline {6}结果评估}{10}{section.6}
+\contentsline {subsection}{\numberline {6.1}测试模块}{10}{subsection.6.1}
+\contentsline {subsection}{\numberline {6.2}测试结果}{10}{subsection.6.2}
+\contentsline {section}{\numberline {7}结论}{11}{section.7}
+\contentsline {section}{参考文献}{12}{section*.4}
+\contentsline {section}{致谢}{13}{section*.5}
 \contentsfinish 

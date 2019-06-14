@@ -1,4 +1,4 @@
-\begin{thebibliography}{1}
+\begin{thebibliography}{10}
 
 \bibitem{chen2012context}
 Yunwen Chen, Zuotao Liu, Daqi Ji, Yingwei Xin, Wenguang Wang, Lu~Yao, and
@@ -32,5 +32,41 @@ Amit Sharma and Baoshi Yan.
   recommendation on linkedin.
 \newblock In {\em Proceedings of the 7th ACM Conference on Recommender
   Systems}, pages 193--200. ACM, 2013.
+
+\bibitem{freund1997decision}
+Yoav Freund and Robert~E Schapire.
+\newblock A decision-theoretic generalization of on-line learning and an
+  application to boosting.
+\newblock {\em Journal of computer and system sciences}, 55(1):119--139, 1997.
+
+\bibitem{wu2004fast}
+Bo~Wu, Haizhou Ai, Chang Huang, and Shihong Lao.
+\newblock Fast rotation invariant multi-view face detection based on real
+  adaboost.
+\newblock In {\em Sixth IEEE International Conference on Automatic Face and
+  Gesture Recognition, 2004. Proceedings.}, pages 79--84. IEEE, 2004.
+
+\bibitem{hu2008adaboost}
+Weiming Hu, Wei Hu, and Steve Maybank.
+\newblock Adaboost-based algorithm for network intrusion detection.
+\newblock {\em IEEE Transactions on Systems, Man, and Cybernetics, Part B
+  (Cybernetics)}, 38(2):577--583, 2008.
+
+\bibitem{niu2006predicting}
+Bing Niu, Yu-Dong Cai, Wen-Cong Lu, Guo-Zheng Li, and Kuo-Chen Chou.
+\newblock Predicting protein structural class with adaboost learner.
+\newblock {\em Protein and peptide letters}, 13(5):489--492, 2006.
+
+\bibitem{viola2002fast}
+Paul Viola and Michael Jones.
+\newblock Fast and robust classification using asymmetric adaboost and a
+  detector cascade.
+\newblock In {\em Advances in neural information processing systems}, pages
+  1311--1318, 2002.
+
+\bibitem{han2011data}
+Jiawei Han, Jian Pei, and Micheline Kamber.
+\newblock {\em Data mining: concepts and techniques}.
+\newblock Elsevier, 2011.
 
 \end{thebibliography}

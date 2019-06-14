@@ -98,6 +98,10 @@
 %\date{} % Activate to display a given date or no date (if empty),
          % otherwise the current date is printed 
 
+\usepackage{amsmath}
+\newcommand\calD{\mathcal{D}}
+\newcommand\XX{\boldsymbol{\mathit{X}}}
+
 \begin{document}
 \begin{sloppypar}
 \maketitle
@@ -269,12 +273,44 @@ Julia是一种用于科学计算的新兴语言，其最大的特点是速度快
 
 
 \newpage
-\section{集成学习Adaboost}
+\section{集成学习AdaBoost}
+
+本节中我们将组合方法融入模型中，组合分类器(ensemble)是一个复合模型，由多个分类器组合而成，个体分类器投票，组合分类器基于投票返回类标号预测。组合分类器往往比成员分类器更准确。
 
 \subsection{模型原理}
 
+自适应提升算法(Adaptive Boosting)是一种机器学习算法，由Yoav Freund和Robert Schapire于1997年首次提出~\cite{freund1997decision}。其基本思想是：前一个分类器分错的样本会被用来训练下一个分类器，相对于大多数其他学习算法而言，不容易出现过拟合现象。
+
+AdaBoost可被应用于人脸识别~\cite{wu2004fast}，网络入侵检测~\cite{hu2008adaboost}，预测蛋白质结构~\cite{niu2006predicting}等机器学习问题。此外，它还可以用于处理不平衡数据~\cite{viola2002fast}，非常适合处理我们这道题中正样本较少的情况。
+
+关于AdaBoost的原理可参考教材~\cite{han2011data}第380页和这篇博客~\footnote{\url{https://www.cnblogs.com/pinard/p/6133937.html}}。图~\ref{fig:AdaBoost}描述了AdaBoost的基本过程~\footnote{图源自\url{https://www.datacamp.com/community/tutorials/adaboost-classifier-python}}。其基本原理如下：
+
+给定数据集$\calD$，它包含$d$个类标记的元组$(\XX_1, y_1), (\XX_2, y_2), \cdots, (\XX_d, y_d)$，其中$y_i$是元组$\XX_i$的类别标号。初始时，AdaBoost对每个训练元组赋予相等的权重$1/d$。为了组合$k$个基分类器，我们将进行$k$轮迭代。每次迭代过程如下：
+\begin{enumerate}
+\item 按训练元组的权重从$\calD$进行有放回抽样，得到训练集$\calD_i$。
+\item 使用训练集$\calD_i$训练分类器$M_i$。
+\item 计算分类器$M_i$在$\calD_i$上的分类误差。若误差大于$0.5$，则重新训练该模型。
+\item 对于每个分类正确的元组，调整其权重，将其权重乘以$\frac{error(M_i)}{1 - error(M_i)}$，其中$error(M_i)$表示分类器$M_i$的分类误差。
+\item 规范化训练元组的权重。
+\end{enumerate}
+
+当使用组合分类器对新元组$\XX$分类时，设置模型$M_i$的投票权重为$\log\frac{1-error(M_i)}{error(M_i)}$，最后返回最大权重的类。
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.85\linewidth]{figure/AdaBoost.jpg}
+	\caption{AdaBoost流程}
+	\label{fig:AdaBoost}
+\end{figure}
+
 \subsection{训练方法}
 
+不同于普通的分类问题，本问题是一个Learning to Rank的模型，不能简单地套用AdaBoost算法。且我们在训练时使用的是pairwise training方法，而在预测时需要对所有推荐物品排序，这其中的差异使得AdaBoost的应用并不方便。
+
+我做的一个尝试是：在训练时仍采用抽样-pairwise training-更新权重的方法。pairwise training中每个元组可视为一个二分类问题，目标是使得正样本的出现概率高于负样本。计算分类器误差时，若某一元组的概率大于$0.5$，则将其视为正确分类的样本。在分类时，将$K$个分类器的权重进行加权平均，后比较所有物品的权重，取其中最大的三个作为最终的推荐结果。该方法最终取得了比较好的效果。
+
+\paragraph{参数设置}
+受系统内存大小限制，我们无法使用较多的模型进行组合，故仅设置模型数量$K$为$5$。对于每个模型，设置其参数维度$d=90$，学习率为$0.00025$。每次训练的过程中，从整个训练样本中有放回的抽样$10,000,000$个样本。整个训练过程在服务器上持续了一个星期，也足以说明这个问题的规模之大。
 
 
 \newpage
@@ -284,11 +320,22 @@ Julia是一种用于科学计算的新兴语言，其最大的特点是速度快
 
 \subsection{测试结果}
 
-\section{代码说明}
+\newpage
+\section{结论}
+
+
 
 \newpage
 \bibliographystyle{unsrt} 
 \bibliography{PJ}
+
+
+\section*{致谢}
+
+\addcontentsline{toc}{section}{致谢}
+
+感谢张宇恒同学与我交流论文复现中的细节！
+
 
 \end{sloppypar}
 \end{document}
