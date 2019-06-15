@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.14159265-2.6-0.99998 (TeX Live 2017/Debian) (preloaded format=xelatex 2019.5.13)  14 JUN 2019 23:01
+This is XeTeX, Version 3.14159265-2.6-0.99998 (TeX Live 2017/Debian) (preloaded format=xelatex 2019.5.13)  15 JUN 2019 18:36
 entering extended mode
  restricted \write18 enabled.
  Source specials enabled.
@@ -1839,26 +1839,35 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
 .................................................
 [1
 
-] [2] [3] [4] [5] [6] [7] [8] [9] [10]
+] [2] [3] [4] [5] [6] [7] [8] [9] [10] [11]
 File: figure/AdaBoost.jpg Graphic file (type bmp)
 <figure/AdaBoost.jpg>
- [11] [12] [13] [14] (./report.bbl
-[15])
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 477.
- [16]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 477.
+ [12] [13]
+File: figure/sample.png Graphic file (type bmp)
+<figure/sample.png>
+File: figure/public.png Graphic file (type bmp)
+<figure/public.png>
+File: figure/private.png Graphic file (type bmp)
+<figure/private.png>
+ [14]
+File: figure/final.png Graphic file (type bmp)
+<figure/final.png>
+ [15] (./report.bbl [16])
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 635.
+ [17]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 635.
  (./report.aux)
-Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 477.
-Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 477.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 477.
+Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 635.
+Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 635.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 635.
  ) 
 Here is how much of TeX's memory you used:
- 29972 strings out of 494530
- 576356 string characters out of 6166160
- 642632 words of memory out of 5000000
- 33522 multiletter control sequences out of 15000+600000
+ 29997 strings out of 494530
+ 576749 string characters out of 6166160
+ 641632 words of memory out of 5000000
+ 33542 multiletter control sequences out of 15000+600000
  540083 words of font info for 110 fonts, out of 8000000 for 9000
  264 hyphenation exceptions out of 8191
- 53i,14n,75p,10433b,647s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 53i,14n,75p,10433b,651s stack positions out of 5000i,500n,10000p,200000b,80000s
 
-Output written on report.pdf (18 pages).
+Output written on report.pdf (19 pages).

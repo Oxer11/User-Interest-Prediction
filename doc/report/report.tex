@@ -183,6 +183,7 @@
 \end{itemize}
 
 \subsection{提交格式}
+\label{sec:submit}
 
 原提交网站上的提交格式说明消失了，我是从别人的博客上看到的，并结合讨论区的评论和自己的一些理解，总结出的以下格式。
 
@@ -193,6 +194,7 @@
 最终提交时，上传一个.csv文件，文件总共两列，包括UserId与ItemIds，分别表示用户的Id和推荐给他的对象Id。public leaderboard数据在前，private数据在后，分别按照用户Id升序排列，推荐的对象按照推荐顺序排序。最终提交的文件中必须恰好包含$1,340,127$行。
 
 \subsection{评价方式}
+\label{sec:eval}
 
 本次比赛使用的是MAP(Mean Average Precision)作为评价指标，计算方式如下：
 \begin{equation}
@@ -221,6 +223,7 @@ Julia是一种用于科学计算的新兴语言，其最大的特点是速度快
 本节主要介绍在数据预处理过程中使用的方法，主要方法与~\cite{chen2012context}一文相同，有一些小细节进行了改动。
 
 \subsection{会话分析}
+\label{sec:session}
 
 训练集中共有$73,209,277$个训练数据，其中涉及$1,392,873$个用户和$4,710$个对象。其中，包含$5,253,828$个正例和$67,955,449$个负例。可以看到，负例的个数远超过正例的个数，那实际上所有的负例都是有效的吗？其实不然。这些记录是从现实生活中的用户浏览记录中提取的，而实际中我们自己在浏览微博时，更多是关注于微博的内容，而不是微博的推荐内容。所以用户没有接受一个推荐，并不一定说明用户真的对这个对象不感兴趣，而有可能是因为用户并没有意识到这个推荐。因此，为了便于我们对用户的兴趣建模，我们需要先剔除一部分的噪声数据。
 
@@ -254,7 +257,7 @@ Julia是一种用于科学计算的新兴语言，其最大的特点是速度快
 成对训练的基本思路是，将一个正例与一个负例组合，通过训练使得正例的概率尽可能的高于负例的概率。如何构造成对的组合呢？对于每个用户，因为负例的数量较多，所以我们对于它的每一个负例，随机挑选一个正例与它匹配，最终，我们将得到$11,193,905$个训练样本。
 
 
-\newpage
+%\newpage
 \section{用户兴趣模型}
 
 本节中，我们主要介绍我们的核心模型——用户兴趣模型。根据用户之前的推荐记录和用户的信息，推测用户的喜好，借此来预测用户对推荐物品接受与否。
@@ -379,9 +382,41 @@ g(\hat{r}_{ui}, \hat{r}_{uj}) = \left(1 + \exp\left(- \left(b_j - b_i + (\qq_j -
 
 \subsection{间接反馈信息}
 
+注意到，测试数据中有77.1\%的用户在训练集中没有任何评分记录，这就意味着我们无法训练出他们的喜好向量，也就很难直接对其喜好进行预测。一种解决的方式是引入社交关系这一间接反馈因素，通过用户的关注与互动信息，来间接推测用户的喜好。
+
+我们使用$S(u)$表示用户$u$关注的对象，$A(u)$表示与用户$u$进行过互动的用户(转发、评论等)，则我们可引入间接反馈因素：
+\begin{equation}
+|S(u)|^{\alpha_1}\sum_{k\in S(u)} \yy_k + |A(u)|^{\alpha_2} \sum_{l\in A(u)} \yy_l
+\end{equation}
+其中，$\alpha_1$与$\alpha_2$分别表示标准化参数，用于将数据调整到同一尺度，在我们的实验中，设置$\alpha_1=-0.4,\alpha_2=-0.5$。
 
 
 \subsection{关键词、标签信息}
+
+最后，我们还将引入关键词与标签的因素。在文件user\_key\_word.txt中给出了从用户的微博信息中提取的关键词，在user\_profile.txt中给出了用户感兴趣的标签，这些都是反映用户喜好的很好的指标，我们也将其考虑其中。
+
+对于用户与对象之间的关系，我们可以用他们的公共标签与公共关键词来衡量：
+\begin{equation}
+b_{kw(u,i)} = \sum_{m \in K(u) \cup K(i)} b_m
+\end{equation}
+\begin{equation}
+b_{tag(u,i)} = \sum_{n \in T(u) \cup T(i)} b_n
+\end{equation}
+这里$K(u)$和$T(u)$分别表示用户的关键词和标签，$b_m$和$b_n$是对于每个关键词和标签的一个可学习参数。
+
+注意，这里对象与用户是共用一个词典的，所以这里对象的关键词和标签都是其相应用户的关键词和标签。
+
+除此之外，用户的喜好也可由其关键词与标签来描述，所以我们可以把下面的两项添加到$\pp_u$中：
+\begin{equation}
+\sum_{m \in K(u)} W(u,m) \cdot \yy_{kw(m)} + |T(u)|^{-\frac{1}{2}} \sum_{n \in T(u)} \yy_{tag(n)}
+\end{equation}
+这里$W(u,m)$表示的是在user\_key\_word.txt文件中给出的对每个关键词的感兴趣程度，我们发现这里的权重已经被标准化过了，即
+\begin{equation}
+\sum_{m \in K(u)} W(u,m)^2 \approx 1
+\end{equation}
+
+依论文中所言，用户的个人资料中提取的关键词质量不高，这里应该是指item.txt中使用的属性。所以，我们全部使用的是user\_profile.txt与user\_key\_word.txt两个文件中给出的标签和关键词信息。
+
 
 
 最终，汇总了所有的信息后，我们得到最新的属性向量为：
@@ -398,17 +433,59 @@ g(\hat{r}_{ui}, \hat{r}_{uj}) = \left(1 + \exp\left(- \left(b_j - b_i + (\qq_j -
 &+ \sum_{m \in K(u)} W(u,m) \cdot \yy_{kw(m)} + |T(u)|^{-\frac{1}{2}} \sum_{n \in T(u)} \yy_{tag(n)}
 \end{align}
 
+与基本模型相似，我们利用上述三式结合(\ref{eq:pairloss})式进行训练，梯度的更新过程类似。
 
 
-\newpage
+%\newpage
 \section{用户行为模型}
+
+在复现论文算法时，我实现了论文第5.2节中提到的用户行为模型，但是发现效果不是很好，所以最终没有使用在我自己的模型中。尽管如此，我还是把这部分内容写入报告中，作为一次对失败尝试的证明。
 
 \subsection{时间度量}
 
+上一节中，我们使用LFM模型度量用户的爱好，结合第2节中的数据预处理过程，取得了不错的效果。我们还可以通过用户的行为模型来衡量用户是否注意到了推荐物品的信息。用户在每个推荐处的停留时间可以很好地反应用户对该物品的关注程度。假如一个用户经常和朋友在微博上互动，他可能会比那些仔细阅读网页信息的人停留的时间要短。
+
+我们已经在第\ref{sec:session}节中处理出了相邻两次推荐之间的时间间隔。我们可以先将这些时间间隔进行分箱离散化：
+\begin{equation}
+\delta_s(u) =
+\begin{cases}
+-1 & s<0 \\
+k & 0\le s < m \text{ and } \theta_k \le \Delta t_s(u) < \theta_{k+1} \\
+-1 & s\ge m
+\end{cases}
+\end{equation}
+其中，我们用$\delta_s(u)$表示时间段$\Delta t_s(u)$所属的项，参数$theta_k$是第$k-1$个箱与第$k$个箱的分界线。这里，我们一共设置了16个箱进行离散化。
+
 \subsection{概率预测}
 
+如何通过这些处理好的时间信息来预测用户的行为呢？一种简单的想法是记录$P(\delta_s)$表示时间间隔为$\delta_s$时注意到物品的概率，此处可以用时间间隔为$\delta_s$的正例数量除以时间间隔为$\delta_s$的总样本数量来估计。
 
-\newpage
+为了更好的估计用户的行为，我们还可以引入时间语境的概念。假如一个用户通常会一直对推荐停留较短时间，而突然在一个物品处停留较长时间，则说明他有很大可能对这个物品感兴趣。因此，可引入上下文因子$\Gamma(r)$:
+\begin{align}
+&\Gamma(1) = P(\delta_s) \\
+&\Gamma(2) = P(\delta_{s-1},\delta_s) \\
+&\Gamma(3) = P(\delta_{s-1},\delta_s,\delta_{s+1}) \\
+&\Gamma(4) = P(\delta_{s-2},\delta_{s-1},\delta_s) + P(\delta_{s-1},\delta_s,\delta_{s+1}) \\
+&\Gamma(5) = P(\delta_{s-2},\delta_{s-1},\delta_s) + P(\delta_{s-1},\delta_s,\delta_{s+1}) + P(\delta_s,\delta_{s+1},\delta_{s+2})
+\end{align}
+
+五种$\Gamma(r)$可被混合来估计用户的行为。
+
+\subsection{不合理性分析}
+
+我使用了$\Gamma(1)$对用户的行为进行预测，但是结果非常糟糕，得分甚至低于$0.2$。而更高阶的因子实现起来非常麻烦，所以我就没有再继续下去。也没有把这种方法加入到最后的集成学习中，糟糕的分类器反而会影响原本正确的结果。
+
+至于为什么这个做法没有达到预期的效果，我进行了一点简单的分析，可能的原因如下：
+\begin{itemize}
+\item 物品的推荐间隔不一定等价于用户的停留时间，所以用这个量来衡量有些不合适。
+\item 在对新的推荐记录进行预测时，需要得知用户前后停留的时间，这一点由上可知，是不可得的。我们只能知道推荐的时刻，无法得知推荐的上下文时间。
+\item 高阶的因子中有概率的加法，但是这样我们就无法将$\Gamma$用概率解释，也就无法解释为什么这种方法是有效的，同时也为之后的组合造成了麻烦。
+\end{itemize}
+
+当然，也很有可能是因为我对这个模型的认知又不太准确的地方。但还是希望以后作者可以再论文中写的更清晰一些，这样也有助于其他人的复现。
+
+
+%\newpage
 \section{集成学习AdaBoost}
 
 本节中我们将组合方法融入模型中，{\em 组合分类器(ensemble)}是一个复合模型，由多个分类器组合而成，个体分类器投票，组合分类器基于投票返回类标号预测。组合分类器往往比成员分类器更准确。
@@ -449,15 +526,91 @@ AdaBoost可被应用于人脸识别~\cite{wu2004fast}，网络入侵检测~\cite
 受系统内存大小限制，我们无法使用较多的模型进行组合，故仅设置模型数量$K$为$5$。对于每个模型，设置其参数维度$d=90$，学习率为$0.00025$。每次训练的过程中，从整个训练样本中有放回的抽样$10,000,000$个样本。整个训练过程在服务器上持续了一个星期，也足以说明这个问题的规模之大。
 
 
-\newpage
+%\newpage
 \section{结果评估}
+
+本节将汇报我的模型取得的成绩，同时说明整个提交文件的结构和测试模块的书写过程，以便助教进行检查。
+
+\subsection{代码文件}
+
+提交文件包括两部分：训练代码与测试文件。为了避免文件过大，中间产生的处理文件没有提交。文件说明如下：
+\begin{enumerate}
+\item {\bf train/Preprocess\_test.ipynb}：test数据集的处理程序，按照时间间隔将测试数据划分为Public和Private两部分。
+\item {\bf train/Preprocess\_train.ipynb}：train数据集的预处理代码，对应第\ref{sec:session}节中的预处理过程。
+\item {\bf train/Pairwise Preprocess.ipynb}：成对训练的数据处理程序，对应第\ref{sec:pair}节中的过程，处理出用于训练的样本对。
+\item {\bf train/Trainer.ipynb}：基本LFM模型，未添加任何额外的因素。
+\item {\bf train/Pairwise Training.ipynb}：成对训练方法，添加了所有衡量用户喜好的因素。
+\item {\bf train/Duration.ipynb}：用户行为模型，一个失败的尝试，未被用到最终的模型中。
+\item {\bf train/Adaboost.ipynb}：最终模型，融合了Pairwise Train和AdaBoost方法。
+\end{enumerate}
+
+{\bf 注1}：除Adaboost之外，其他的训练代码中都可能有些许的错误，因为是在写后面的算法时候才发现的，所以就没有在原文件里修改。
+
+{\bf 注2}：以上代码中的参数设置均偏小，主要为了能让代码在我的笔记本上运行，便于检查代码正确性，所以未调大参数。实际训练中使用的参数请参照第\ref{sec:train}节。
+
+
+\subsection{实验过程}
+\label{sec:train}
+
+整个实验过程总共持续了三个星期，其中有三次大的训练阶段：基本模型、成对训练和组合方法。主要是为了检验一下中间模型的性能，但是发现训练过程实在太耗时间，最后一次组合方法的训练整整持续了一个周。
+
+\paragraph{电脑配置} 
+因为模型中的参数量超过了1亿，且样本量巨大，我笔记本电脑的内存根本跑不动，于是就借了实验室的服务器来跑。服务器的配置是\textit{Intel i7-7700K @ 4.2-GHz (4 Cores)} \textit{32GB}内存。
+
+\paragraph{正则化}
+我们没有在最终训练过程中加入正则化项(论文中也没有)，而是通过手动调整的方式进行。在每个epoch结束时，trainer会汇报当前epoch的平均正确率，当发现正确率可接受(85\%以上)时，中断训练，预测结果，这一过程可使用try...except语句实现。
+
+\paragraph{训练参数}
+最终训练时，我们设置模型个数$K=5$，属性向量的维度$d=90$，学习率为$0.0005$，其余参数均在正文中有汇报。
 
 \subsection{测试模块}
 
+因为比赛无法提交，所以我们只好由自己书写测试程序，再与标准答案进行对比。我根据第\ref{sec:submit}和\ref{sec:eval}节中的描述书写了测试程序存放在test/test.ipynb文件中。
+
+测试的思路比较简单，按照答案中给出的Public和Private信息划分数据，然后进行统计即可。为了证明测试程序的正确性，我对example submission的得分进行了测试，结果如图~\ref{fig:sample}。
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.85\linewidth]{figure/sample.png}
+	\caption{tester计算出的样例测试结果}
+	\label{fig:sample}
+\end{figure}
+
+而样例提交在LeaderBoard上的得分分别如图~\ref{fig:public}和~\ref{fig:private}所示。二者相同，可验证tester的正确性。
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\linewidth]{figure/public.png}
+	\caption{Public Leaderboard上的样例测试结果}
+	\label{fig:public}
+\end{figure}
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\linewidth]{figure/private.png}
+	\caption{Private Leaderboard上的样例测试结果}
+	\label{fig:private}
+\end{figure}
+
+
 \subsection{测试结果}
 
-\newpage
+最终，我的模型经过测试得到的分数为{\bf 0.42768(public score)/0.41811(private score)}，在Public Leaderboard上{\bf 排名5/657}，在Private Leaderboard上{\bf 排名3/657}，测试结果如图~\ref{fig:test}所示。
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.85\linewidth]{figure/final.png}
+	\caption{最终测试结果}
+	\label{fig:test}
+\end{figure}
+
+为了证明得分的真实性，我将答案文件一并提交，存放在test/test.csv文件下，可通过运行test/tester.ipynb文件来验证答案的分数。
+
+%\newpage
 \section{结论}
+
+在本项目中，我参考\cite{chen2012context}一文改进LFM模型，使用AdaBoost方法对KDD2012 Track1的推荐问题进行求解，最终取得了第3名的成绩。在打比赛的过程中，感悟颇深，尤其感受到数据挖掘过程中许多细小琐碎的问题，如数据预处理、参数的调整、实现错误导致浪费大量的训练时间等等。整个PJ的工作量十分巨大，整整耗费了我两个半周的时间，训练的过程也比较久。不过，总体来说，收获非常大，尤其是最后取得了比较不错的成绩(尽管没有原论文成绩好，可能是因为我没有完全理解论文中的做法)。希望以后还可以参加类似的数据挖掘比赛！
+
 
 
 
@@ -465,12 +618,17 @@ AdaBoost可被应用于人脸识别~\cite{wu2004fast}，网络入侵检测~\cite
 \bibliographystyle{unsrt} 
 \bibliography{PJ}
 
-
 \section*{致谢}
 
 \addcontentsline{toc}{section}{致谢}
 
-感谢张宇恒同学与我交流论文复现中的细节！
+\begin{itemize}
+\item 感谢汪卫老师与肖仰华老师一学期的课程指导。
+\item 感谢助教在我完成PJ中提供的宝贵建议。
+\item 感谢张宇恒同学与我交流论文复现中的细节。
+\end{itemize}
+
+
 
 
 \end{sloppypar}
